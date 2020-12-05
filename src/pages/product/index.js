@@ -1,33 +1,21 @@
-import React, { Component } from 'react'
+import React, {useEffect, useState } from 'react'
 import api from '../../services/api'
-import './styles.css'
+import DescriptionProduct from '../../components/description'
 
 
-export default class Product extends Component {
+export default function Product(props) {
+    const [product, setProdutct] = useState({})
+    const { id } = props.match.params
 
-    state = {
-        Product: []
-    }
+    useEffect(() => {
+        async function getProduct(){
+            const {data} = await api.get(`/products/${id}`)
+            setProdutct(data);
+        }
+        getProduct()
+    }, [id])
 
-    async componentDidMount() {
-        const { id } = this.props.match.params
-
-        const response = await api.get(`/products/${id}`)
-
-        this.setState({
-            Product: response.data
-        })
-    }
-
-    render() {
-        const { Product } = this.state
-
-        return (
-            <div className="product-info">
-                <h1>{Product.title}</h1>
-                <p>{Product.description}</p>
-                <p>URL: <a href={Product.url}></a>{Product.url}</p>
-            </div>
-        )
-    }
+    return (
+        <DescriptionProduct product={product} />
+    );
 }
